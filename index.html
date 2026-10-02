@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayuno 16:8 · Tablero de Bruno</title>
+<style>
+:root{
+  --bg:#0b100d; --bg2:#101813; --card:#141d17; --card2:#18241c; --line:#223228;
+  --txt:#e6f1ea; --mut:#8aa396; --g:#2ee58a; --g2:#17b869; --gd:#0f6b3f;
+  --red:#ff5d6c; --amb:#ffc45c; --empty:#1b271f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#12301f 0%,transparent 60%),var(--bg);color:var(--txt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 56px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+h1{margin:0;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.02em}
+h1 span{color:var(--g)}
+.sub{color:var(--mut);font-size:.92rem;margin-top:4px}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--mut);padding:6px 12px;border-radius:99px;font-size:.8rem}
+h2{font-size:1.05rem;margin:0 0 4px;letter-spacing:.01em}
+h2 small{color:var(--mut);font-weight:400;margin-left:6px}
+.section-title{display:flex;align-items:center;gap:10px;margin:34px 0 14px;font-size:1.25rem;font-weight:700}
+.section-title:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:16px}
+.kpi .l{color:var(--mut);font-size:.78rem;text-transform:uppercase;letter-spacing:.07em}
+.kpi .v{font-size:2rem;font-weight:800;margin-top:6px;letter-spacing:-.02em}
+.kpi .v.g{color:var(--g)} .kpi .v.r{color:var(--red)}
+.kpi .s{color:var(--mut);font-size:.8rem;margin-top:2px}
+.two{grid-template-columns:1fr}
+@media(min-width:860px){.two{grid-template-columns:1.2fr 1fr}}
+.tabs{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;margin:8px 0 10px}
+.tabs button{background:none;border:0;color:var(--mut);padding:6px 12px;border-radius:8px;font:inherit;font-size:.82rem;cursor:pointer}
+.tabs button.on{background:var(--gd);color:#eafff3}
+svg{width:100%;height:auto;display:block}
+svg text{fill:var(--mut);font-size:11px;font-family:inherit}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--mut);font-size:.8rem;margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.progress{height:16px;background:var(--empty);border-radius:99px;overflow:hidden;border:1px solid var(--line);margin:12px 0 8px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:99px;transition:width .6s}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:4px;margin-top:10px}
+.heatwrap{display:flex;gap:8px;align-items:stretch}
+.heatlab{display:grid;grid-template-rows:repeat(7,1fr);gap:4px;color:var(--mut);font-size:.68rem;margin-top:10px;align-items:center}
+.heat div{aspect-ratio:1;border-radius:4px;background:var(--empty);min-width:10px;position:relative}
+.heat .ok{background:var(--g2)} .heat .ko{background:var(--red)} .heat .fut{background:transparent;border:1px dashed #1b271f}
+.heat .hoy{outline:2px solid var(--amb);outline-offset:1px}
+.notes{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.notes li{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.notes .d{color:var(--mut);font-size:.76rem;display:flex;gap:8px;align-items:center;margin-bottom:3px}
+.tag{font-size:.68rem;padding:1px 8px;border-radius:99px;border:1px solid var(--line)}
+.tag.si{color:var(--g);border-color:var(--gd)} .tag.no{color:var(--red);border-color:#6b2530}
+.tag.t{color:var(--amb);border-color:#6b5420}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:22px 16px;text-align:center;color:var(--mut);background:var(--bg2)}
+.empty b{display:block;color:var(--txt);font-size:1.05rem;margin-bottom:6px}
+.banner{background:linear-gradient(135deg,#123423,#13201a);border:1px solid var(--gd);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+.banner b{color:var(--g)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:8px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:500;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.dn{color:var(--g)} .up{color:var(--red)} .eq{color:var(--mut)}
+footer{margin-top:36px;color:var(--mut);font-size:.78rem;text-align:center}
+.hide{display:none!important}
+
+#lock{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+#lock .box{width:100%;max-width:380px;text-align:center}
+#lock h1{margin:0 0 6px}
+#lock .emo{font-size:2.6rem;margin-bottom:6px}
+#lock form{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+#lock input[type=password]{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:13px 14px;font:inherit;font-size:1rem;outline:none}
+#lock input[type=password]:focus{border-color:var(--g2);box-shadow:0 0 0 3px rgba(46,229,138,.15)}
+#lock button.go{background:linear-gradient(180deg,var(--g2),var(--gd));color:#eafff3;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+#lock button.go[disabled]{opacity:.6;cursor:wait}
+#lock .rem{color:var(--mut);font-size:.82rem;display:flex;gap:8px;align-items:center;justify-content:center}
+#lock .err{color:var(--red);font-size:.9rem;min-height:1.3em}
+</style>
+</head>
+<body>
+<div id="lock">
+  <div class="box card">
+    <div class="emo">🔒</div>
+    <h1>Ayuno <span>16:8</span></h1>
+    <div class="sub">Tablero privado de Bruno. Ingresá la contraseña para ver los datos.</div>
+    <form id="lockForm" autocomplete="off">
+      <input type="password" id="pw" placeholder="Contraseña" autocomplete="current-password" autofocus required>
+      <label class="rem"><input type="checkbox" id="remember"> Recordar en esta pestaña</label>
+      <button class="go" id="goBtn" type="submit">Desbloquear</button>
+      <div class="err" id="lockErr" role="alert"></div>
+    </form>
+  </div>
+</div>
+<div class="wrap hide" id="app">
+  <header>
+    <div>
+      <h1>Ayuno <span>16:8</span> · tablero de Bruno</h1>
+      <div class="sub" id="frase">Cargando…</div>
+    </div>
+    <div class="chip" id="gen"></div>
+  </header>
+
+  <div id="bannerVacio" class="banner hide">
+    <b>¡Todavía no hay registros de ayuno!</b><br>
+    Cuando empieces a anotar tus días en <code>registro.csv</code> y regeneres el tablero, acá vas a ver tu racha, el cumplimiento y los gráficos. El primer día es el más importante, vamos con todo. 💪
+  </div>
+
+  <section class="grid kpis" id="kpis"></section>
+
+  <div class="grid two" style="margin-top:14px">
+    <div class="card">
+      <h2>Meta: 30 días seguidos <small id="metaTxt"></small></h2>
+      <div class="progress"><div id="metaBar" style="width:0%"></div></div>
+      <div class="sub" id="metaSub"></div>
+    </div>
+    <div class="card">
+      <h2>Últimas notas</h2>
+      <ul class="notes" id="notas"></ul>
+    </div>
+  </div>
+
+  <div class="grid two" style="margin-top:14px">
+    <div class="card">
+      <h2>Cumplimiento</h2>
+      <div class="tabs" id="tabs">
+        <button data-m="sem" class="on">Por semana</button>
+        <button data-m="14">Últimos 14 días</button>
+        <button data-m="30">Últimos 30 días</button>
+      </div>
+      <div id="chartBox"></div>
+      <div class="legend"><span><i style="background:var(--g2)"></i>Cumplido</span><span><i style="background:var(--red)"></i>No cumplido</span><span><i style="background:#2c3b31"></i>Sin registro</span></div>
+    </div>
+    <div class="card">
+      <h2>Calendario <small>últimas 12 semanas</small></h2>
+      <div id="heatBox"></div>
+      <div class="legend"><span><i style="background:var(--g2)"></i>Cumplido</span><span><i style="background:var(--red)"></i>No</span><span><i style="background:var(--empty)"></i>Sin dato</span><span><i style="outline:2px solid var(--amb);background:var(--empty)"></i>Hoy</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">⚖️ Peso</div>
+  <section class="grid kpis" id="pkpis"></section>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card">
+      <h2>Evolución del peso</h2>
+      <div id="pesoChart"></div>
+      <div class="legend"><span><i style="background:var(--g)"></i>Peso</span><span><i style="background:var(--amb)"></i>Punto de partida</span></div>
+    </div>
+    <div class="card">
+      <h2>Últimas mediciones</h2>
+      <div id="pesoTabla"></div>
+    </div>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+"use strict";
+function AYUNO_START(DATA){
+
+(function(){
+var REG = DATA.registro || [], PESO = DATA.peso || [];
+var NS = "http://www.w3.org/2000/svg";
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+/* ---------- fechas (enteros = días desde epoch, sin lío de husos) ---------- */
+function dn(s){var p=s.split("-");return Math.round(Date.UTC(+p[0],+p[1]-1,+p[2])/864e5)}
+function ds(n){return new Date(n*864e5).toISOString().slice(0,10)}
+function dow(n){return (new Date(n*864e5).getUTCDay()+6)%7} // 0=lunes
+var MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var DIAS=["lun","mar","mié","jue","vie","sáb","dom"];
+function corto(n){var d=new Date(n*864e5);return d.getUTCDate()+" "+MES[d.getUTCMonth()]}
+function largo(s){return corto(dn(s))+" "+s.slice(0,4)}
+var qs=new URLSearchParams(location.search);
+var hoyStr=qs.get("hoy");
+if(!hoyStr||!/^\d{4}-\d{2}-\d{2}$/.test(hoyStr)){var t=new Date();hoyStr=t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0")}
+var HOY=dn(hoyStr);
+
+/* ---------- agregación por día ---------- */
+var porDia={}; // n -> {ok:bool, n:filas}
+REG.forEach(function(r){
+  var k=dn(r.fecha); var o=porDia[k]||(porDia[k]={ok:true,rows:0});
+  o.rows++; if(r.cumplio==="no")o.ok=false;
+});
+var dias=Object.keys(porDia).map(Number).sort(function(a,b){return a-b});
+var nReg=dias.length, nOk=dias.filter(function(k){return porDia[k].ok}).length;
+
+function rango(n){ // últimos n días incluyendo hoy
+  var reg=0,ok=0; for(var i=0;i<n;i++){var o=porDia[HOY-i]; if(o){reg++; if(o.ok)ok++;}} return {reg:reg,ok:ok};
+}
+function pct(a,b){return b?Math.round(a*100/b)+"%":"—"}
+
+// racha
+var mejor=0,run=0,prev=null;
+dias.forEach(function(k){
+  if(!porDia[k].ok){run=0;prev=null;return}
+  run=(prev!==null&&k===prev+1)?run+1:1; prev=k; if(run>mejor)mejor=run;
+});
+var actual=0;
+(function(){
+  var k=HOY; if(!porDia[k]) k=HOY-1; // hoy todavía sin anotar: no corta la racha
+  while(porDia[k]&&porDia[k].ok){actual++;k--}
+})();
+
+/* ---------- KPIs ---------- */
+function kpi(l,v,s,cls){return '<div class="card kpi"><div class="l">'+l+'</div><div class="v '+(cls||"")+'">'+v+'</div><div class="s">'+(s||"")+'</div></div>'}
+var r7=rango(7), r30=rango(30);
+$("kpis").innerHTML=
+  kpi("Racha actual",actual+(actual===1?" día":" días"),"seguidos cumpliendo","g")+
+  kpi("Mejor racha",mejor+(mejor===1?" día":" días"),"tu récord")+
+  kpi("Cumplimiento total",pct(nOk,nReg),nOk+" de "+nReg+" días","g")+
+  kpi("Últimos 7 días",pct(r7.ok,r7.reg),r7.ok+" de "+r7.reg+" registrados")+
+  kpi("Últimos 30 días",pct(r30.ok,r30.reg),r30.ok+" de "+r30.reg+" registrados")+
+  kpi("Días registrados",nReg,nReg-nOk>0?(nReg-nOk)+" sin cumplir":"¡ninguno fallado!");
+
+if(!nReg){$("bannerVacio").classList.remove("hide")}
+$("frase").textContent = !nReg ? "Arrancamos de cero: el mejor momento es hoy." :
+  actual>=7 ? "¡Qué máquina! "+actual+" días en racha, no aflojes." :
+  actual>0 ? "Buen ritmo, seguí así que se va armando el hábito." :
+  "La racha se cortó, pero mañana arrancás de nuevo. Sin drama.";
+$("gen").textContent="Hoy: "+largo(hoyStr)+" · generado "+(DATA.generado||"");
+
+/* ---------- meta 30 días ---------- */
+var META=30, mp=Math.min(100,Math.round(actual*100/META));
+$("metaBar").style.width=mp+"%";
+$("metaTxt").textContent=actual+" / "+META;
+$("metaSub").textContent = actual>=META ? "🏆 ¡Meta cumplida! 30 días seguidos, bárbaro." :
+  actual===0 ? "Todavía no hay racha activa. Cada día cuenta: el 1 es el que más pesa." :
+  "Vas "+mp+"%. Te faltan "+(META-actual)+" días para la meta.";
+
+/* ---------- notas ---------- */
+(function(){
+  var ul=$("notas"), items=REG.filter(function(r){return r.nota&&r.nota.replace(/^\[(inicio|fin)\]\s*/i,"").trim()})
+    .map(function(r,i){return {r:r,i:i}})
+    .sort(function(a,b){return a.r.fecha<b.r.fecha?1:a.r.fecha>b.r.fecha?-1:b.i-a.i}).slice(0,6);
+  if(!items.length){ul.innerHTML='<li class="empty" style="list-style:none"><b>Sin notas por ahora</b>Anotá cómo te sentiste y aparece acá.</li>';return}
+  ul.innerHTML=items.map(function(x){
+    var r=x.r, m=/^\[(inicio|fin)\]\s*/i.exec(r.nota), txt=r.nota.replace(/^\[(inicio|fin)\]\s*/i,"");
+    return '<li><div class="d"><span>'+largo(r.fecha)+'</span>'+(m?'<span class="tag t">'+m[1].toLowerCase()+'</span>':'')+
+      '<span class="tag '+r.cumplio+'">'+(r.cumplio==="si"?"cumplió":"no cumplió")+'</span></div>'+esc(txt)+'</li>';
+  }).join("");
+})();
+
+/* ---------- gráfico de barras ---------- */
+function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e}
+function barras(modo){
+  var box=$("chartBox"); box.innerHTML="";
+  if(!nReg){box.innerHTML='<div class="empty"><b>Gráfico vacío por ahora</b>Apenas haya días registrados, vas a ver las barras de cumplimiento.</div>';return}
+  var W=640,H=250,L=30,R=8,T=14,B=34, svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Cumplimiento"});
+  var bars=[];
+  if(modo==="sem"){
+    var first=dias[0]-dow(dias[0]), lastW=HOY-dow(HOY), nW=Math.max(1,Math.round((lastW-first)/7)+1);
+    var start=nW>12?lastW-11*7:first; nW=Math.min(nW,12);
+    for(var w=0;w<nW;w++){
+      var s=start+w*7, ok=0,ko=0;
+      for(var d=0;d<7;d++){var o=porDia[s+d]; if(o){o.ok?ok++:ko++}}
+      bars.push({lab:corto(s),ok:ok,ko:ko});
+    }
+  } else {
+    var n=+modo;
+    for(var i=n-1;i>=0;i--){var k=HOY-i,o=porDia[k];
+      bars.push({lab:corto(k),ok:o&&o.ok?1:0,ko:o&&!o.ok?1:0,none:!o})}
+  }
+  var max=modo==="sem"?7:1, ih=H-T-B, iw=W-L-R, bw=iw/bars.length;
+  var steps=modo==="sem"?[0,1,2,3,4,5,6,7]:[0,1];
+  steps.forEach(function(v){var y=T+ih-ih*v/max;
+    svg.appendChild(el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:"#1f2d24","stroke-width":1}));
+    svg.appendChild(el("text",{x:L-6,y:y+4,"text-anchor":"end"},v));});
+  var every=bars.length>20?3:bars.length>12?2:1;
+  bars.forEach(function(b,i){
+    var x=L+i*bw+bw*0.15, w=bw*0.7, y=T+ih;
+    if(modo==="sem"){
+      var hk=ih*b.ko/max, ho=ih*b.ok/max;
+      if(b.ok){svg.appendChild(el("rect",{x:x,y:y-ho,width:w,height:ho,rx:3,fill:"#17b869"}));}
+      if(b.ko){svg.appendChild(el("rect",{x:x,y:y-ho-hk,width:w,height:hk,rx:3,fill:"#ff5d6c"}));}
+      if(!b.ok&&!b.ko)svg.appendChild(el("rect",{x:x,y:y-3,width:w,height:3,rx:1.5,fill:"#2c3b31"}));
+      var tot=b.ok+b.ko; if(tot){svg.appendChild(el("text",{x:x+w/2,y:y-ho-hk-4,"text-anchor":"middle",style:"fill:#e6f1ea"},b.ok+"/"+tot));}
+    } else {
+      var hh=b.none?3:ih; svg.appendChild(el("rect",{x:x,y:y-hh,width:w,height:hh,rx:3,fill:b.none?"#2c3b31":b.ok?"#17b869":"#ff5d6c"}));
+    }
+    var tt=el("title",{},b.lab+(modo==="sem"?": "+b.ok+" cumplidos, "+b.ko+" no (semana desde el lunes)":b.none?": sin registro":b.ok?": cumplido":": no cumplido"));
+    svg.lastChild.appendChild(tt);
+    if(i%every===0||i===bars.length-1&&every===1)svg.appendChild(el("text",{x:x+w/2,y:H-B+16,"text-anchor":"middle",style:bars.length>14?"font-size:9px":""},b.lab));
+  });
+  box.appendChild(svg);
+}
+barras("sem");
+$("tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  [].forEach.call($("tabs").children,function(x){x.classList.toggle("on",x===b)});barras(b.dataset.m)});
+
+/* ---------- heatmap ---------- */
+(function(){
+  var box=$("heatBox"), WEEKS=12, lastW=HOY-dow(HOY), start=lastW-(WEEKS-1)*7, h="";
+  var lab='<div class="heatlab">'+DIAS.map(function(d,i){return '<span>'+(i%2===0?d:"")+'</span>'}).join("")+'</div>';
+  h='<div class="heatwrap">'+lab+'<div class="heat" style="flex:1">';
+  for(var w=0;w<WEEKS;w++)for(var d=0;d<7;d++){
+    var k=start+w*7+d, o=porDia[k], cls=k>HOY?"fut":o?(o.ok?"ok":"ko"):"";
+    if(k===HOY)cls+=" hoy";
+    h+='<div class="'+cls+'" title="'+corto(k)+(o?(o.ok?": cumplido":": no cumplido"):k>HOY?"":": sin registro")+'"></div>';
+  }
+  h+='</div></div>';
+  box.innerHTML=h+(nReg?'':'<div class="sub" style="margin-top:10px">Cuando cargues días, se van pintando acá. 🟩</div>');
+})();
+
+/* ---------- PESO ---------- */
+function kg(v){return v.toFixed(1).replace(".",",")+" kg"}
+function sg(v){return (v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1).replace(".",",")+" kg"}
+(function(){
+  var P=PESO.slice().sort(function(a,b){return a.fecha<b.fecha?-1:a.fecha>b.fecha?1:0});
+  var pk=$("pkpis"), ch=$("pesoChart"), tb=$("pesoTabla");
+  if(!P.length){
+    pk.innerHTML=kpi("Peso inicial","—","sin datos")+kpi("Peso actual","—","sin datos")+kpi("Cambio total","—","")+kpi("Mínimo","—","");
+    ch.innerHTML=tb.innerHTML='<div class="empty"><b>Todavía no hay pesajes</b>Cargá tu punto de partida en <code>peso.csv</code> (fecha,kilos) y regenerá el tablero.</div>';
+    return;
+  }
+  var ini=P[0], act=P[P.length-1], delta=act.kilos-ini.kilos, min=P.reduce(function(m,p){return p.kilos<m.kilos?p:m},P[0]);
+  var cls=delta<0?"g":delta>0?"r":"";
+  pk.innerHTML=
+    kpi("Peso inicial",kg(ini.kilos),largo(ini.fecha))+
+    kpi("Peso actual",kg(act.kilos),largo(act.fecha),"g")+
+    kpi("Cambio total",sg(delta),P.length===1?"una sola medición, por ahora":delta<0?"¡bajando!":delta>0?"subió un poco":"estable",cls)+
+    kpi("Mínimo",kg(min.kilos),largo(min.fecha));
+
+  // gráfico de línea
+  var W=640,H=260,L=44,R=16,T=16,B=34, ih=H-T-B, iw=W-L-R;
+  var ys=P.map(function(p){return p.kilos}).concat([ini.kilos]);
+  var lo=Math.min.apply(null,ys), hi=Math.max.apply(null,ys), pad=Math.max(1,(hi-lo)*.2);
+  lo=Math.floor(lo-pad); hi=Math.ceil(hi+pad); if(hi-lo<4)hi=lo+4;
+  var d0=dn(P[0].fecha), d1=dn(P[P.length-1].fecha), span=Math.max(1,d1-d0);
+  function X(f){return P.length===1?L+iw/2:L+iw*(dn(f)-d0)/span}
+  function Y(v){return T+ih-ih*(v-lo)/(hi-lo)}
+  var svg=el("svg",{viewBox:"0 0 "+W+" "+H,role:"img","aria-label":"Evolución del peso"});
+  var tk=5; for(var i=0;i<=tk;i++){var v=lo+(hi-lo)*i/tk,y=Y(v);
+    svg.appendChild(el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:"#1f2d24"}));
+    svg.appendChild(el("text",{x:L-6,y:y+4,"text-anchor":"end"},v.toFixed(1).replace(".",",")));}
+  // línea de partida
+  var yi=Y(ini.kilos);
+  svg.appendChild(el("line",{x1:L,x2:W-R,y1:yi,y2:yi,stroke:"#ffc45c","stroke-dasharray":"6 5","stroke-width":1.5}));
+  svg.appendChild(el("text",{x:W-R,y:yi-6,"text-anchor":"end",style:"fill:#ffc45c"},"Partida "+kg(ini.kilos)));
+  if(P.length>1){
+    var pts=P.map(function(p){return X(p.fecha)+","+Y(p.kilos)}).join(" ");
+    var area=L+","+(T+ih)+" "+pts+" "+X(act.fecha)+","+(T+ih);
+    svg.appendChild(el("polygon",{points:area,fill:"rgba(46,229,138,.10)"}));
+    svg.appendChild(el("polyline",{points:pts,fill:"none",stroke:"#2ee58a","stroke-width":2.5,"stroke-linejoin":"round","stroke-linecap":"round"}));
+  }
+  P.forEach(function(p,i){
+    var c=el("circle",{cx:X(p.fecha),cy:Y(p.kilos),r:i===P.length-1?5.5:3.8,fill:"#0b100d",stroke:"#2ee58a","stroke-width":2.5});
+    c.appendChild(el("title",{},largo(p.fecha)+": "+kg(p.kilos))); svg.appendChild(c);
+  });
+  var nl=Math.min(P.length,6);
+  for(var j=0;j<nl;j++){var p=P[nl===1?0:Math.round(j*(P.length-1)/(nl-1))];
+    svg.appendChild(el("text",{x:X(p.fecha),y:H-B+18,"text-anchor":P.length>1&&j===0?"start":P.length>1&&j===nl-1?"end":"middle"},corto(dn(p.fecha))));}
+  ch.appendChild(svg);
+  if(P.length===1)ch.insertAdjacentHTML("beforeend",'<div class="sub" style="margin-top:8px">Hay una sola medición (tu punto de partida). Con la próxima pesada se arma la línea. 📈</div>');
+
+  // tabla
+  var rows=P.map(function(p,i){return {p:p,d:i?p.kilos-P[i-1].kilos:null}}).reverse().slice(0,10);
+  tb.innerHTML='<table><thead><tr><th>Fecha</th><th class="n">Peso</th><th class="n">vs. anterior</th></tr></thead><tbody>'+
+    rows.map(function(r){var d=r.d,c=d===null?"eq":d<0?"dn":d>0?"up":"eq";
+      return '<tr><td>'+largo(r.p.fecha)+'</td><td class="n">'+kg(r.p.kilos)+'</td><td class="n '+c+'">'+(d===null?"inicio":sg(d))+'</td></tr>'}).join("")+'</tbody></table>';
+})();
+
+$("foot").textContent="Dato local, sin conexión · Un día cuenta como cumplido si ninguna fila de ese día dice \"no\" · Hecho para Bruno 💚";
+})();
+}
+</script>
+
+<script>
+"use strict";
+(function(){
+var ENC = {"v": 1, "kdf": "PBKDF2-SHA256", "iter": 600000, "salt": "PyYB4uLOkPdNMVPFPtwOhg==", "iv": "m9ruOhh4ppmGl8t/", "ct": "WbmGTEIwk84oQ/yAuZEwzMsOMBxhdNf6zq9XTH5Aypu9DW4rF5FCcbmoT+lwLa0wfqQ+Jb+WUKSgvOnXGbu3l7OpBYe3RAnagzDOZNNXofkv2kS/mK6BXfSKq2LI+z8jbAtLhxWa+UTESAVi2x4QmbBNJ6768sC91dQ+s47Ly/jo+NjJFWjjku9odlAavCU3rnSYx7AOTWB74jscid8kEGUM9TRFlrvlmZ+qTWXbGcPAZLRhvvFj2kGnra1TLodRY/j9FHJ8sIfqmjDJl9LSdVAMZ83ngRBFOpyqNb7Z6o0qfOFvCpzQIY4x5csFMh7A/sid4yJZWdhZjojHLKQq47eREuHgnTdjGv67ea5E4tmjs9BNuxHdNwDPCytYIaFfaWqiqX5r/8HZhaCdiRXEOueSQkEX6sJZEMbYdP9ddEwgzpp8FIGTlrlnFif7i34Ksfq0MWMOmDmjG5DiCSW10/bDzawUQ1GstthAUOF+0ovzPHyBEDIrZu2IF1wAHrjsLZ3fIkoJrVYXQMEbXfFJsBsZwRKSv+VCw8V9eHPfWUZ0dABrKAIdz/pHMoGQ7s/b/XVKJkrku6gNUhtABpn4saEer3iHe5+TgnDZKXzK8vdp+Z5aHv8on46eVrDru9liyqiEjsec7wkI3PqZIz0ExYR1Bm6Eo0a9oXoPkUArmBE7qYqXIqn8zvBL1AtfdoAvVUVPPbdMDqwLalviqatHxGeUQMViB0lZfk4P8DU/vqYDvjbecE15Utk/RvwopD/nmHMlDSrjJvutKXBpAz0EJAPriXtDLCRjx5uGvbMHf63sgeOO62BH9ymtCxLS88N3i2ZRgPPbYMVvngBQqDMbEJN6KdqBUPFaglya6Fo/+O4xIlMEOESRhN/xJdOlaZ8dVy/8BlcVpD2i06yWqqhXyY5Mwh4="};
+var started = false;
+function b64(s){var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function $(id){return document.getElementById(id)}
+async function decrypt(pw){
+  var km = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+  var key = await crypto.subtle.deriveKey({name:"PBKDF2", salt:b64(ENC.salt), iterations:ENC.iter, hash:"SHA-256"},
+    km, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+  var plain = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64(ENC.iv)}, key, b64(ENC.ct));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+async function tryUnlock(pw, silent){
+  var err=$("lockErr"), btn=$("goBtn");
+  err.textContent="";
+  if(!window.crypto || !crypto.subtle){err.textContent="Tu navegador no soporta WebCrypto (se necesita HTTPS).";return false}
+  btn.disabled=true; btn.textContent="Desbloqueando…";
+  try{
+    var data = await decrypt(pw);
+    if(started)return true; started=true;
+    if($("remember") && $("remember").checked){try{sessionStorage.setItem("ayuno_pw",pw)}catch(e){}}
+    $("lock").classList.add("hide");
+    $("app").classList.remove("hide");
+    AYUNO_START(data);
+    return true;
+  }catch(e){
+    if(!silent)err.textContent="Contraseña incorrecta. Probá de nuevo.";
+    try{sessionStorage.removeItem("ayuno_pw")}catch(_){}
+    btn.disabled=false; btn.textContent="Desbloquear";
+    return false;
+  }
+}
+$("lockForm").addEventListener("submit",function(ev){ev.preventDefault();tryUnlock($("pw").value,false)});
+var saved=null;try{saved=sessionStorage.getItem("ayuno_pw")}catch(e){}
+if(saved)tryUnlock(saved,true);
+})();
+</script>
+</body>
+</html>
